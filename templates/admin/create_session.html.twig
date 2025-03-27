@@ -1,0 +1,134 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une session{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    {% include 'admin/partials/sidebar.html.twig' %}
+
+    <main class="main-content">
+        <h1>Créer une session</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="{{ label }}-message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <form action="{{ path('admin_create_session_process') }}" method="POST">
+            <div class="card form-admin">
+
+                <label for="nom_session">Nom de la session :</label>
+                <input type="text" id="nom_session" name="nom_session" required>
+
+                <label for="formation_id">Formation :</label>
+                <select id="formation_id" name="formation_id" required>
+                    <option value="">Sélectionner une formation</option>
+                    {% for formation in formations %}
+                        <option value="{{ formation.id }}">{{ formation.nom }}</option>
+                    {% endfor %}
+                </select>
+
+                <label for="formateur_id">Formateur :</label>
+                <select id="formateur_id" name="formateur_id" required>
+                    <option value="">Sélectionner un formateur</option>
+                    {% for formateur in formateurs %}
+                        <option value="{{ formateur.id }}">{{ formateur.firstname }} {{ formateur.lastname }}</option>
+                    {% endfor %}
+                </select>
+
+                <!-- 👉 Sélection Groupe(s) ou Apprenant(s) -->
+                <div class="toggle-container">
+                    <label>Participants :</label><br>
+
+                    <input type="radio" id="choix_groupe" name="choix_apprenants" value="groupe" checked>
+                    <label for="choix_groupe">Groupe(s)</label>
+
+                    <input type="radio" id="choix_individuel" name="choix_apprenants" value="individuel">
+                    <label for="choix_individuel">Apprenant(s)</label>
+
+                    <!-- Section Groupes -->
+                    <div class="toggle-section1" id="groupe_section">
+                        <label for="groupe_id">Groupes :</label>
+                        <select id="groupe_id" name="groupe_id[]" multiple="multiple" class="select2">
+                            {% for groupe in groupes %}
+                                <option value="{{ groupe.id }}">{{ groupe.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Section Apprenants -->
+                    <div class="toggle-section1" id="apprenants_section" style="display: none;">
+                        <label for="apprenants">Apprenants :</label>
+                        <select id="apprenants" name="apprenants[]" multiple="multiple" class="select2">
+                            {% for apprenant in apprenants %}
+                                <option value="{{ apprenant.id }}">{{ apprenant.firstname }} {{ apprenant.lastname }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+               
+                <label for="salle_nom">Salle :</label>
+                <input list="salles" name="salle_nom" id="salle_nom" required placeholder="Sélectionner ou entrer une salle">
+
+                <datalist id="salles">
+                    {% for salle in salles %}
+                        <option value="{{ salle.nom }}"></option>
+                    {% endfor %}
+                </datalist>
+
+                <label for="date_debut">Date de début :</label>
+                <input type="datetime-local" id="date_debut" name="date_debut" required>
+
+                <label for="date_fin">Date de fin :</label>
+                <input type="datetime-local" id="date_fin" name="date_fin" required>
+
+                <button type="submit" class="button button--primary">Créer</button>
+            </div>
+        </form>
+    </main>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Init Select2
+            $('.select2').select2({
+                placeholder: "Sélectionner une option",
+                allowClear: true
+            });
+
+            const choixGroupe = document.getElementById('choix_groupe');
+            const choixIndividuel = document.getElementById('choix_individuel');
+            const groupeSection = document.getElementById('groupe_section');
+            const apprenantsSection = document.getElementById('apprenants_section');
+
+            function toggleSections() {
+                if (choixGroupe.checked) {
+                    groupeSection.style.display = 'block';
+                    apprenantsSection.style.display = 'none';
+                } else {
+                    groupeSection.style.display = 'none';
+                    apprenantsSection.style.display = 'block';
+                }
+            }
+
+            choixGroupe.addEventListener('change', toggleSections);
+            choixIndividuel.addEventListener('change', toggleSections);
+
+            toggleSections(); // init on page load
+        });
+    </script>
+{% endblock %}

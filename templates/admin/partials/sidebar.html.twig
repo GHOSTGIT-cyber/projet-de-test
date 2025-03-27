@@ -1,0 +1,53 @@
+<nav class="sidebar">
+    <div class="user-profile">
+        {% if app.user.profilePicture %}
+            <img src="{{ asset(app.user.profilePicture) }}" alt="Photo de l'utilisateur" class="user-photo">
+        {% else %}
+            <div class="user-initials-placeholder">
+                {{ app.user.firstname|slice(0, 1)|upper }}
+            </div>
+        {% endif %}
+    </div>
+
+    <a href="{{ path('app_logout') }}">Déconnexion</a>
+
+    <hr class="sidebar-divider">
+
+    <ul class="menu-top">
+        <li>
+            <a href="{{ path('admin_dashboard') }}" class="{% if app.request.attributes.get('_route') == 'admin_dashboard' %}active{% endif %}">
+                <img src="{{ asset('/icons/dashboard.svg') }}" alt="Dashboard" class="icon">
+                Tableau de bord
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ path('admin_formations') }}" class="{% if app.request.attributes.get('_route') == 'admin_formations' %}active{% endif %}">
+                <img src="{{ asset('/icons/formations.svg') }}" alt="Formations" class="icon">
+                Formations
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ path('admin_contacts') }}" class="{% if app.request.attributes.get('_route') == 'admin_contacts' %}active{% endif %}">
+                <img src="{{ asset('icons/contacts.svg') }}" alt="Contacts" class="icon">
+                Contacts
+            </a>
+        </li>
+    </ul>
+
+    <ul class="menu-bottom">
+        <li>
+            <a href="{{ path('admin_parametres') }}" class="{% if app.request.attributes.get('_route') == 'admin_parametres' %}active{% endif %}">
+                <img src="{{ asset('icons/settings.svg') }}" alt="Paramètres" class="icon">
+                Paramètres
+            </a>
+        </li>
+    </ul>
+
+    <hr class="sidebar-divider">
+
+    <div class="image">
+        <img id="gefor" src="{{ asset('images/gefor.jpg') }}" alt="Logo Gefor">
+    </div>
+</nav>
